@@ -11,3 +11,6 @@ Mercury/
 *.d
 *.c_date
 *.swp
+test_gcd
+test_factorial
+test_roman
