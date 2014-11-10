@@ -1,25 +1,38 @@
+%----------------------------------------------------------------------------%
+% vim: ft=mercury ff=unix ts=4 sw=4 et
+%----------------------------------------------------------------------------%
+% File: test_factorial.m
+% Copyright © 2014 Sebastian Godelet
+% Main author: Sebastian Godelet <sebastian.godelet+github@gmail.com>
+% Created on: Mon 10 Nov 18:22:24 CST 2014
+% Stability: low
+%----------------------------------------------------------------------------%
+% Testing the factorial module.
+%----------------------------------------------------------------------------%
+
 :- module test_factorial.
 
 :- interface.
 
 :- import_module io.
 
+%----------------------------------------------------------------------------%
+
 :- pred main(io::di, io::uo) is det.
+
+%----------------------------------------------------------------------------%
+%----------------------------------------------------------------------------%
 
 :- implementation.
 
-:- import_module char.
 :- import_module factorial.
-:- import_module generic_poly.
-:- import_module integer.
-:- import_module list.
-:- import_module std_util.
-:- import_module string.
+:- import_module integer_math.
+
+%----------------------------------------------------------------------------%
 
 main(!IO) :-
-    command_line_arguments(Args, !IO),
-    ToInteger = integer.det_from_string `compose` list.det_index0(Args),
-    Number = ToInteger(0),
-    Fmt = to_poly_type `compose` integer.to_string,
-    Result = factorial(Number),
-    io.format("factorial(%s) = %s\n", list.map(Fmt, [Number, Result]), !IO).
+    eval_fun("factorial", factorial, !IO).
+
+%----------------------------------------------------------------------------%
+:- end_module test_factorial.
+%----------------------------------------------------------------------------%
