@@ -1,0 +1,1 @@
+MCFLAGS := --intermodule-optimisation --use-grade-subdirs -O5
