@@ -5,7 +5,7 @@
 % Copyright © 2014 Sebastian Godelet
 % Main author: Sebastian Godelet <sebastian.godelet+github@gmail.com>
 % Created on: Mon 10 Nov 18:22:24 CST 2014
-% Stability: low
+% Stability: high
 %----------------------------------------------------------------------------%
 % Testing the factorial module.
 %----------------------------------------------------------------------------%
