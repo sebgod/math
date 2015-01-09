@@ -38,7 +38,11 @@
 %   Example grammars from Wikipedia
 %
 
-:- type turtle ---> turtle.
+:- type turtle == list(turtle_cmd).
+
+:- type turtle_cmd
+    --->    turn(turtle_cmd_angle       ::  float)
+    ;       move(turtle_cmd_distance    ::  float).
 
 :- type turtle_func(T) == (func(l_system.result(T)) = turtle).
 :- inst turtle_func == (func(in) = (out) is det).
@@ -58,7 +62,7 @@ example(1, "Algea",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -72,7 +76,7 @@ example(2, "Pythagoras Tree",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -86,7 +90,7 @@ example(3, "Cantor dust",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -99,7 +103,7 @@ example(4, "Koch curve",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -113,7 +117,7 @@ example(5, "Sierpinksi triangle",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -127,7 +131,7 @@ example(6, "Dragon curve",
             )
         )
     ),
-    (func(_) = turtle)
+    (func(_) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -148,6 +152,8 @@ print_example(Number, !IO) :-
         produce_all(Grammar, 3, [], RevResults),
         reverse(RevResults, Results),
         foldl(print_as_line, Results, !IO),
+        %Large = produce_nth0(Grammar, 8),
+        %io.format("length: %d\n", [i(length(Large))], !IO),
         nl(!IO)
     else
         sorry($file, $pred, format("Example %d", [i(Number)]))
