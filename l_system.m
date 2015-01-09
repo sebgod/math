@@ -31,32 +31,53 @@
     ---> grammar(
             list(V),
             list(C),
-            symbols,
+            result,
             rules(V)
         ).
 
 :- type rules(A) == (func(A) = list(A)).
 
-:- inst rules(V) == (func(in(V)) = out(symbols) is det).
+:- inst rules(V) == (func(in(V)) = out(result) is det).
 
-:- inst symbols == list(ground).
+:- type results(A) == list(result(A)).
 
-:- func produce_next(grammar(A)) = list(A).
-:- mode produce_next(in(grammar(V, C))) = out(symbols) is det.
+:- type result(A) == list(A).
 
-:- func produce_next(grammar(A), list(A)) = list(A).
-:- mode produce_next(in(grammar(V, C)), in(symbols)) = out(symbols) is det.
+:- inst results == list(result).
+:- inst result == list(ground).
+
+:- func produce_next(grammar(A), result(A)) = result(A).
+:- mode produce_next(in(grammar(V, C)), in(result)) = out(result) is det.
+
+:- pred produce_all(grammar(A), int, results(A), results(A)).
+:- mode produce_all(in(grammar(V, C)), in, in(results), out(results)) is det.
 
 %----------------------------------------------------------------------------%
 %----------------------------------------------------------------------------%
 
 :- implementation.
 
+:- import_module int.
+:- import_module require.
+
 %----------------------------------------------------------------------------%
 
-produce_next(G) = G ^ grammar_axiom.
+produce_next(Grammar, LastStep) =
+    condense(map(Grammar ^ grammar_rules, LastStep)).
 
-produce_next(G, L) = condense(map(G ^ grammar_rules, L)).
+produce_all(Grammar, StepsLeft, [], Results) :-
+    produce_all(Grammar, StepsLeft, [Grammar ^ grammar_axiom], Results).
+
+produce_all(Grammar, StepsLeft, [LastStep | LastRest], Results) :-
+    NewStep = produce_next(Grammar, LastStep),
+    NewResults = [NewStep, LastStep | LastRest],
+    ( if StepsLeft = 1 then
+        Results = NewResults
+    else if StepsLeft > 1 then
+        produce_all(Grammar, StepsLeft - 1, NewResults, Results)
+    else
+       unexpected($file, $pred, "invalid number of steps, must be > 0")
+    ).
 
 %----------------------------------------------------------------------------%
 :- end_module l_system.

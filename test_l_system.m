@@ -42,8 +42,9 @@ main(!IO) :-
                 )
             )
         ),
-    Symbols = produce_next(OrigGrammar),
-    foldl(io.print, Symbols, !IO).
+    produce_all(OrigGrammar, 7, [], RevResults),
+    reverse(RevResults, Results),
+    foldl(io.write_line, Results, !IO).
 
 %----------------------------------------------------------------------------%
 :- end_module test_l_system.
