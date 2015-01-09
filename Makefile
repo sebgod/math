@@ -7,7 +7,10 @@ TEST_MODULES := $(patsubst %.m,%,$(wildcard test_*.m))
 .PHONY: all
 all: $(TEST_MODULES) .gitignore
 
-test_%: test_%.m generic_*.m
+Mercury.modules: $(wildcard *.m)
+	$(MMC) -f $^
+
+test_%: test_%.m Mercury.modules
 	$(MMC) -m $@
 
 .%: .%-tmpl
