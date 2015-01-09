@@ -5,10 +5,17 @@ DEL_DIR  := rm -fR
 TEST_MODULES := $(patsubst %.m,%,$(wildcard test_*.m))
 
 .PHONY: all
-all: $(TEST_MODULES)
+all: $(TEST_MODULES) .gitignore
 
 test_%: test_%.m generic_*.m
 	$(MMC) -m $@
+
+.%: .%-tmpl
+	cp -f $< $@
+	@echo "">>$@
+	echo "# executables">>$@
+	@$(foreach TEST,$(TEST_MODULES), \
+		echo $(TEST) >>$@; echo $(TEST).bat >>$@;)
 
 .PHONY: clean
 clean:

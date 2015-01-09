@@ -11,7 +11,11 @@ Mercury/
 *.d
 *.c_date
 *.swp
-test_*.bat
-test_gcd
+
+# executables
 test_factorial
+test_factorial.bat
+test_gcd
+test_gcd.bat
 test_roman
+test_roman.bat
