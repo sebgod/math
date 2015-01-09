@@ -11,6 +11,7 @@ Mercury/
 *.d
 *.c_date
 *.swp
+Mercury.modules
 
 # executables
 test_factorial
