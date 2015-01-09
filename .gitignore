@@ -11,6 +11,7 @@ Mercury/
 *.d
 *.c_date
 *.swp
+test_*.bat
 test_gcd
 test_factorial
 test_roman
