@@ -1,4 +1,5 @@
 Mercury/
+Mercury.modules
 *.mh
 *.err
 *.init
@@ -11,12 +12,13 @@ Mercury/
 *.d
 *.c_date
 *.swp
-Mercury.modules
 
 # executables
-test_factorial
-test_factorial.bat
+test_l_system
+test_l_system.bat
 test_gcd
 test_gcd.bat
 test_roman
 test_roman.bat
+test_factorial
+test_factorial.bat
