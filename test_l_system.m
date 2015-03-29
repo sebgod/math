@@ -26,8 +26,12 @@
 :- implementation.
 
 :- import_module l_system.
+:- import_module turtle.
 
 :- import_module char.
+:- import_module int.
+:- import_module float.
+:- import_module math.
 :- import_module list.
 :- import_module string.
 :- import_module require.
@@ -37,23 +41,16 @@
 %
 %   Example grammars from Wikipedia
 %
+:- type l_turtle_func(T) == (func(int, T) = turtle_cmds).
+:- inst l_turtle_func    == (func(in, in) = (out) is det).
 
-:- type turtle == list(turtle_cmd).
-
-:- type turtle_cmd
-    --->    turn(turtle_cmd_angle       ::  float)
-    ;       move(turtle_cmd_distance    ::  float).
-
-:- type turtle_func(T) == (func(l_system.result(T)) = turtle).
-:- inst turtle_func == (func(in) = (out) is det).
-
-:- some [T] pred example(int, string, grammar(T), turtle_func(T)).
-:- mode example(in, out, out(unique), out(turtle_func)) is semidet.
-:- mode example(out, out, out(unique), out(turtle_func)) is multi.
+:- some [T] pred example(int, string, grammar(T), l_turtle_func(T)).
+:- mode example(in, out, out(unique), out(l_turtle_func)) is semidet.
+:- mode example(out, out, out(unique), out(l_turtle_func)) is multi.
 
 %----------------------------------------------------------------------------%
 
-example(1, "Algea",
+example(1, "Algae",
     grammar(['A', 'B'], [], ['A'],
         (func(V) =
             ( V = 'A' -> ['A', 'B']
@@ -62,7 +59,7 @@ example(1, "Algea",
             )
         )
     ),
-    (func(_) = [])
+    (func(_, _) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -76,7 +73,7 @@ example(2, "Pythagoras Tree",
             )
         )
     ),
-    (func(_) = [])
+    (func(_, _) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -90,20 +87,26 @@ example(3, "Cantor dust",
             )
         )
     ),
-    (func(_) = [])
+    (func(_, _) = [])
 ).
 
 %----------------------------------------------------------------------------%
 
 example(4, "Koch curve",
-    grammar(['F'], ['+', '-'], ['F'],
+    grammar(['F'], ['+', '-'], ['F', '+', '+', 'F', '+', '+', 'F'],
         (func(V) =
-            ( V = 'F' -> ['F', '+', 'F', '-', 'F', '-', 'F', '+', 'F']
+            ( V = 'F' -> ['F', '-', 'F', '+', '+', 'F', '-', 'F']
             ; [V] % this is implied by L-systems
             )
         )
     ),
-    (func(_) = [])
+    (func(N, A) =
+        ( A = 'F' -> [move(1.0/(float(N) + 1.0))]
+        ; A = (+) -> [turn(pi/3.0)]
+        ; A = (-) -> [turn(-pi/3.0)]
+        ; unexpected($file, $pred, format("%c not in alphabet", [c(A)]))
+        )
+    )
 ).
 
 %----------------------------------------------------------------------------%
@@ -117,7 +120,7 @@ example(5, "Sierpinksi triangle",
             )
         )
     ),
-    (func(_) = [])
+    (func(_, _) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -131,7 +134,7 @@ example(6, "Dragon curve",
             )
         )
     ),
-    (func(_) = [])
+    (func(_, _) = [])
 ).
 
 %----------------------------------------------------------------------------%
@@ -145,16 +148,18 @@ main(!IO) :-
 
 print_example(Number, !IO) :-
     ( if
-        example(Number, Name, Grammar, Turtle)
+        example(Number, Name, Grammar, LSystemToTurtle)
     then
+        Depth = 3,
         io.format("https://en.wikipedia.org/wiki/L-system#Example_%d:_%s\n",
             [i(Number), s(replace_all(Name, " ", "_"))], !IO),
-        produce_all(Grammar, 3, [], RevResults),
+        produce_all(Grammar, Depth, [], RevResults),
         reverse(RevResults, Results),
         foldl(print_as_line, Results, !IO),
-        %Large = produce_nth0(Grammar, 8),
-        %io.format("length: %d\n", [i(length(Large))], !IO),
-        nl(!IO)
+        nl(!IO),
+        T = (pred(A::in, B::out) is det :- B = LSystemToTurtle(Depth, A)),
+        map(T, produce_nth0(Grammar, Depth), Turtle0),
+        condense(Turtle0, Turtle)
     else
         sorry($file, $pred, format("Example %d", [i(Number)]))
     ).
